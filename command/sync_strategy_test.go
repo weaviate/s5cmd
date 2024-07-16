@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	errorpkg "github.com/peak/s5cmd/v2/error"
-	"github.com/peak/s5cmd/v2/storage"
+	errorpkg "github.com/weaviate/s5cmd/v2/error"
+	"github.com/weaviate/s5cmd/v2/storage"
 )
 
 func TestSizeAndModificationStrategy_ShouldSync(t *testing.T) {

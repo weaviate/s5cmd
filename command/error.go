@@ -1,14 +1,13 @@
 package command
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
-	"github.com/hashicorp/go-multierror"
-
-	errorpkg "github.com/peak/s5cmd/v2/error"
-	"github.com/peak/s5cmd/v2/log"
-	"github.com/peak/s5cmd/v2/storage/url"
+	errorpkg "github.com/weaviate/s5cmd/v2/error"
+	"github.com/weaviate/s5cmd/v2/log"
+	"github.com/weaviate/s5cmd/v2/storage/url"
 )
 
 func printDebug(op string, err error, urls ...*url.URL) {
@@ -36,7 +35,8 @@ func printError(command, op string, err error) {
 
 	// check if we have our own error type
 	{
-		cerr, ok := err.(*errorpkg.Error)
+		var cerr *errorpkg.Error
+		ok := errors.As(err, &cerr)
 		if ok {
 			msg := log.ErrorMessage{
 				Err:       cleanupError(cerr.Err),
@@ -50,10 +50,11 @@ func printError(command, op string, err error) {
 
 	// check if errors are aggregated
 	{
-		merr, ok := err.(*multierror.Error)
+		merr, ok := err.(interface{ Unwrap() []error })
 		if ok {
-			for _, err := range merr.Errors {
-				customErr, ok := err.(*errorpkg.Error)
+			for _, err := range merr.Unwrap() {
+				var customErr *errorpkg.Error
+				ok := errors.As(err, &customErr)
 				if ok {
 					msg := log.ErrorMessage{
 						Err:       cleanupError(customErr.Err),

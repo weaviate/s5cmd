@@ -10,11 +10,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/hashicorp/go-multierror"
 	"github.com/kballard/go-shellquote"
 	"github.com/urfave/cli/v2"
 
-	"github.com/peak/s5cmd/v2/parallel"
+	"github.com/weaviate/s5cmd/v2/parallel"
 )
 
 var runHelpTemplate = `Name:
@@ -92,7 +91,7 @@ func (r Run) Run(ctx context.Context) error {
 	go func() {
 		defer close(errDoneCh)
 		for err := range waiter.Err() {
-			merrorWaiter = multierror.Append(merrorWaiter, err)
+			merrorWaiter = errors.Join(merrorWaiter, err)
 		}
 	}()
 
@@ -157,7 +156,7 @@ func (r Run) Run(ctx context.Context) error {
 		printError(commandFromContext(r.c), r.c.Command.Name, reader.Err())
 	}
 
-	return multierror.Append(merrorWaiter, reader.Err()).ErrorOrNil()
+	return errors.Join(merrorWaiter, reader.Err())
 }
 
 // Reader is a cancelable reader.
@@ -203,7 +202,7 @@ func (r *Reader) read() {
 					}
 					return
 				}
-				r.err = multierror.Append(r.err, err)
+				r.err = errors.Join(r.err, err)
 			}
 		}
 	}

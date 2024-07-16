@@ -2,17 +2,17 @@ package command
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"regexp"
 
-	"github.com/hashicorp/go-multierror"
 	"github.com/urfave/cli/v2"
 
-	errorpkg "github.com/peak/s5cmd/v2/error"
-	"github.com/peak/s5cmd/v2/log"
-	"github.com/peak/s5cmd/v2/log/stat"
-	"github.com/peak/s5cmd/v2/storage"
-	"github.com/peak/s5cmd/v2/storage/url"
+	errorpkg "github.com/weaviate/s5cmd/v2/error"
+	"github.com/weaviate/s5cmd/v2/log"
+	"github.com/weaviate/s5cmd/v2/log/stat"
+	"github.com/weaviate/s5cmd/v2/storage"
+	"github.com/weaviate/s5cmd/v2/storage/url"
 )
 
 var deleteHelpTemplate = `Name:
@@ -183,7 +183,7 @@ func (d Delete) Run(ctx context.Context) error {
 			}
 
 			if err := object.Err; err != nil {
-				merrorObjects = multierror.Append(merrorObjects, err)
+				merrorObjects = errors.Join(merrorObjects, err)
 				printError(d.fullCommand, d.op, err)
 				continue
 			}
@@ -208,7 +208,7 @@ func (d Delete) Run(ctx context.Context) error {
 				continue
 			}
 
-			merrorResult = multierror.Append(merrorResult, obj.Err)
+			merrorResult = errors.Join(merrorResult, obj.Err)
 			printError(d.fullCommand, d.op, obj.Err)
 			continue
 		}
@@ -220,7 +220,7 @@ func (d Delete) Run(ctx context.Context) error {
 		log.Info(msg)
 	}
 
-	return multierror.Append(merrorResult, merrorObjects).ErrorOrNil()
+	return errors.Join(merrorResult, merrorObjects)
 }
 
 // newSources creates object URL list from given sources.

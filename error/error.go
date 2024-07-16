@@ -5,10 +5,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/hashicorp/go-multierror"
-
-	"github.com/peak/s5cmd/v2/storage"
-	"github.com/peak/s5cmd/v2/storage/url"
+	"github.com/weaviate/s5cmd/v2/storage"
+	"github.com/weaviate/s5cmd/v2/storage/url"
 )
 
 // Error is the type that implements error interface.
@@ -53,12 +51,12 @@ func IsCancelation(err error) bool {
 		return true
 	}
 
-	merr, ok := err.(*multierror.Error)
+	merr, ok := err.(interface{ Unwrap() []error })
 	if !ok {
 		return false
 	}
 
-	for _, err := range merr.Errors {
+	for _, err := range merr.Unwrap() {
 		if IsCancelation(err) {
 			return true
 		}

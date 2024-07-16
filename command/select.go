@@ -3,19 +3,19 @@ package command
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"strconv"
 	"strings"
 
-	"github.com/hashicorp/go-multierror"
 	"github.com/urfave/cli/v2"
 
-	errorpkg "github.com/peak/s5cmd/v2/error"
-	"github.com/peak/s5cmd/v2/log/stat"
-	"github.com/peak/s5cmd/v2/parallel"
-	"github.com/peak/s5cmd/v2/storage"
-	"github.com/peak/s5cmd/v2/storage/url"
+	errorpkg "github.com/weaviate/s5cmd/v2/error"
+	"github.com/weaviate/s5cmd/v2/log/stat"
+	"github.com/weaviate/s5cmd/v2/parallel"
+	"github.com/weaviate/s5cmd/v2/storage"
+	"github.com/weaviate/s5cmd/v2/storage/url"
 )
 
 var selectHelpTemplate = `Name:
@@ -318,7 +318,7 @@ func (s Select) Run(ctx context.Context) error {
 		defer close(errDoneCh)
 		for err := range waiter.Err() {
 			printError(s.fullCommand, s.op, err)
-			merrorWaiter = multierror.Append(merrorWaiter, err)
+			merrorWaiter = errors.Join(merrorWaiter, err)
 		}
 	}()
 
@@ -355,7 +355,7 @@ func (s Select) Run(ctx context.Context) error {
 		}
 
 		if err := object.Err; err != nil {
-			merrorObjects = multierror.Append(merrorObjects, err)
+			merrorObjects = errors.Join(merrorObjects, err)
 			printError(s.fullCommand, s.op, err)
 			continue
 		}
@@ -363,7 +363,7 @@ func (s Select) Run(ctx context.Context) error {
 		if object.StorageClass.IsGlacier() && !s.forceGlacierTransfer {
 			if !s.ignoreGlacierWarnings {
 				err := fmt.Errorf("object '%v' is on Glacier storage", object)
-				merrorObjects = multierror.Append(merrorObjects, err)
+				merrorObjects = errors.Join(merrorObjects, err)
 				printError(s.fullCommand, s.op, err)
 			}
 			continue
@@ -383,7 +383,7 @@ func (s Select) Run(ctx context.Context) error {
 	<-errDoneCh
 	<-writeDoneCh
 
-	return multierror.Append(merrorWaiter, merrorObjects).ErrorOrNil()
+	return errors.Join(merrorWaiter, merrorObjects)
 }
 
 func (s Select) prepareTask(ctx context.Context, client *storage.S3, url *url.URL, resultCh chan<- json.RawMessage) func() error {

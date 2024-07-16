@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/peak/s5cmd/v2/command"
+	"github.com/weaviate/s5cmd/v2/command"
 
 	"gotest.tools/v3/assert"
 	"gotest.tools/v3/icmd"

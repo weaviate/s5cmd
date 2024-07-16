@@ -13,16 +13,15 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/hashicorp/go-multierror"
 	"github.com/urfave/cli/v2"
 
-	errorpkg "github.com/peak/s5cmd/v2/error"
-	"github.com/peak/s5cmd/v2/log"
-	"github.com/peak/s5cmd/v2/log/stat"
-	"github.com/peak/s5cmd/v2/parallel"
-	"github.com/peak/s5cmd/v2/progressbar"
-	"github.com/peak/s5cmd/v2/storage"
-	"github.com/peak/s5cmd/v2/storage/url"
+	errorpkg "github.com/weaviate/s5cmd/v2/error"
+	"github.com/weaviate/s5cmd/v2/log"
+	"github.com/weaviate/s5cmd/v2/log/stat"
+	"github.com/weaviate/s5cmd/v2/parallel"
+	"github.com/weaviate/s5cmd/v2/progressbar"
+	"github.com/weaviate/s5cmd/v2/storage"
+	"github.com/weaviate/s5cmd/v2/storage/url"
 )
 
 const (
@@ -451,7 +450,7 @@ func (c Copy) Run(ctx context.Context) error {
 				os.Exit(1)
 			}
 			printError(c.fullCommand, c.op, err)
-			merrorWaiter = multierror.Append(merrorWaiter, err)
+			merrorWaiter = errors.Join(merrorWaiter, err)
 		}
 	}()
 
@@ -485,13 +484,13 @@ func (c Copy) Run(ctx context.Context) error {
 
 		if !object.Type.IsRegular() {
 			err := fmt.Errorf("object '%v' is not a regular file", object)
-			merrorObjects = multierror.Append(merrorObjects, err)
+			merrorObjects = errors.Join(merrorObjects, err)
 			printError(c.fullCommand, c.op, err)
 			continue
 		}
 
 		if err := object.Err; err != nil {
-			merrorObjects = multierror.Append(merrorObjects, err)
+			merrorObjects = errors.Join(merrorObjects, err)
 			printError(c.fullCommand, c.op, err)
 			continue
 		}
@@ -499,7 +498,7 @@ func (c Copy) Run(ctx context.Context) error {
 		if object.StorageClass.IsGlacier() && !c.forceGlacierTransfer {
 			if !c.ignoreGlacierWarnings {
 				err := fmt.Errorf("object '%v' is on Glacier storage", object)
-				merrorObjects = multierror.Append(merrorObjects, err)
+				merrorObjects = errors.Join(merrorObjects, err)
 				printError(c.fullCommand, c.op, err)
 			}
 			continue
@@ -535,7 +534,7 @@ func (c Copy) Run(ctx context.Context) error {
 		case srcurl.IsRemote(): // remote->local
 			if c.metadataDirective != "" {
 				err := fmt.Errorf("metadata directive is not supported for download")
-				merrorObjects = multierror.Append(merrorObjects, err)
+				merrorObjects = errors.Join(merrorObjects, err)
 				printError(c.fullCommand, c.op, err)
 				continue
 			}
@@ -543,7 +542,7 @@ func (c Copy) Run(ctx context.Context) error {
 		case c.dst.IsRemote(): // local->remote
 			if c.metadataDirective != "" {
 				err := fmt.Errorf("metadata directive is not supported for upload")
-				merrorObjects = multierror.Append(merrorObjects, err)
+				merrorObjects = errors.Join(merrorObjects, err)
 				printError(c.fullCommand, c.op, err)
 				continue
 			}
@@ -556,7 +555,7 @@ func (c Copy) Run(ctx context.Context) error {
 	waiter.Wait()
 	<-errDoneCh
 
-	return multierror.Append(merrorWaiter, merrorObjects).ErrorOrNil()
+	return errors.Join(merrorWaiter, merrorObjects)
 }
 
 func (c Copy) prepareCopyTask(

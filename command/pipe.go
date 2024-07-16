@@ -10,11 +10,11 @@ import (
 
 	"github.com/urfave/cli/v2"
 
-	errorpkg "github.com/peak/s5cmd/v2/error"
-	"github.com/peak/s5cmd/v2/log"
-	"github.com/peak/s5cmd/v2/log/stat"
-	"github.com/peak/s5cmd/v2/storage"
-	"github.com/peak/s5cmd/v2/storage/url"
+	errorpkg "github.com/weaviate/s5cmd/v2/error"
+	"github.com/weaviate/s5cmd/v2/log"
+	"github.com/weaviate/s5cmd/v2/log/stat"
+	"github.com/weaviate/s5cmd/v2/storage"
+	"github.com/weaviate/s5cmd/v2/storage/url"
 )
 
 var pipeHelpTemplate = `Name:
@@ -32,7 +32,7 @@ Examples:
 	02. Pass arbitrary metadata to an object
 		 > cat "flowers.png" | gzip | s5cmd {{.HelpName}} --metadata "imageSize=6032x4032" s3://bucket/prefix/flowers.gz
 	03. Download an object and stream it to a bucket
-		> curl https://github.com/peak/s5cmd/ | s5cmd {{.HelpName}} s3://bucket/s5cmd.html
+		> curl https://github.com/weaviate/s5cmd/ | s5cmd {{.HelpName}} s3://bucket/s5cmd.html
 	04. Compress an object and stream it to a bucket
 		> gzip -c file | s5cmd {{.HelpName}} s3://bucket/file.gz
 `

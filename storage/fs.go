@@ -11,7 +11,7 @@ import (
 	"github.com/karrick/godirwalk"
 	"github.com/termie/go-shutil"
 
-	"github.com/peak/s5cmd/v2/storage/url"
+	"github.com/weaviate/s5cmd/v2/storage/url"
 )
 
 // Filesystem is the Storage implementation of a local filesystem.

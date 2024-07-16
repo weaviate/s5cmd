@@ -1,4 +1,4 @@
-module github.com/peak/s5cmd/v2
+module github.com/weaviate/s5cmd/v2
 
 go 1.19
 
@@ -6,12 +6,11 @@ require (
 	github.com/aws/aws-sdk-go v1.44.298
 	github.com/cheggaaa/pb/v3 v3.1.4
 	github.com/google/go-cmp v0.6.0
-	github.com/hashicorp/go-multierror v1.1.1
 	github.com/iancoleman/strcase v0.0.0-20191112232945-16388991a334
 	github.com/igungor/gofakes3 v0.0.16
 	github.com/karrick/godirwalk v1.15.3
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51
-	github.com/lanrat/extsort v1.0.0
+	github.com/lanrat/extsort v1.0.2
 	github.com/termie/go-shutil v0.0.0-20140729215957-bcacb06fecae
 	github.com/urfave/cli/v2 v2.11.2
 	go.uber.org/mock v0.4.0
@@ -26,7 +25,6 @@ require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fatih/color v1.15.0 // indirect
-	github.com/hashicorp/errwrap v1.0.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/kr/pretty v0.3.0 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect

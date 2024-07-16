@@ -3,8 +3,8 @@ package command
 import (
 	"testing"
 
-	"github.com/peak/s5cmd/v2/storage"
-	"github.com/peak/s5cmd/v2/storage/url"
+	"github.com/weaviate/s5cmd/v2/storage"
+	"github.com/weaviate/s5cmd/v2/storage/url"
 	"gotest.tools/v3/assert"
 )
 

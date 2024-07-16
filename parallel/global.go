@@ -1,6 +1,6 @@
 package parallel
 
-import "github.com/peak/s5cmd/v2/parallel/fdlimit"
+import "github.com/weaviate/s5cmd/v2/parallel/fdlimit"
 
 var global *Manager
 

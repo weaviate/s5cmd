@@ -13,9 +13,9 @@ import (
 	"time"
 
 	"github.com/lanrat/extsort"
-	"github.com/peak/s5cmd/v2/log"
-	"github.com/peak/s5cmd/v2/storage/url"
-	"github.com/peak/s5cmd/v2/strutil"
+	"github.com/weaviate/s5cmd/v2/log"
+	"github.com/weaviate/s5cmd/v2/storage/url"
+	"github.com/weaviate/s5cmd/v2/strutil"
 )
 
 var (

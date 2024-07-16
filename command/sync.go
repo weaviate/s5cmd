@@ -2,6 +2,7 @@ package command
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -10,16 +11,15 @@ import (
 	"sync"
 
 	"github.com/aws/aws-sdk-go/aws/awserr"
-	"github.com/hashicorp/go-multierror"
 	"github.com/lanrat/extsort"
 	"github.com/urfave/cli/v2"
 
-	errorpkg "github.com/peak/s5cmd/v2/error"
-	"github.com/peak/s5cmd/v2/log"
-	"github.com/peak/s5cmd/v2/log/stat"
-	"github.com/peak/s5cmd/v2/parallel"
-	"github.com/peak/s5cmd/v2/storage"
-	"github.com/peak/s5cmd/v2/storage/url"
+	errorpkg "github.com/weaviate/s5cmd/v2/error"
+	"github.com/weaviate/s5cmd/v2/log"
+	"github.com/weaviate/s5cmd/v2/log/stat"
+	"github.com/weaviate/s5cmd/v2/parallel"
+	"github.com/weaviate/s5cmd/v2/storage"
+	"github.com/weaviate/s5cmd/v2/storage/url"
 )
 
 const (
@@ -224,7 +224,7 @@ func (s Sync) Run(c *cli.Context) error {
 				os.Exit(1)
 			}
 			printError(s.fullCommand, s.op, err)
-			merrorWaiter = multierror.Append(merrorWaiter, err)
+			merrorWaiter = errors.Join(merrorWaiter, err)
 		}
 	}()
 
@@ -235,7 +235,7 @@ func (s Sync) Run(c *cli.Context) error {
 	go s.planRun(c, onlySource, onlyDest, commonObjects, dsturl, strategy, pipeWriter, isBatch)
 
 	err = NewRun(c, pipeReader).Run(ctx)
-	return multierror.Append(err, merrorWaiter).ErrorOrNil()
+	return errors.Join(err, merrorWaiter)
 }
 
 // compareObjects compares source and destination objects. It assumes that

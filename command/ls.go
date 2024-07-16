@@ -2,17 +2,17 @@ package command
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
-	"github.com/hashicorp/go-multierror"
 	"github.com/urfave/cli/v2"
 
-	errorpkg "github.com/peak/s5cmd/v2/error"
-	"github.com/peak/s5cmd/v2/log"
-	"github.com/peak/s5cmd/v2/log/stat"
-	"github.com/peak/s5cmd/v2/storage"
-	"github.com/peak/s5cmd/v2/storage/url"
-	"github.com/peak/s5cmd/v2/strutil"
+	errorpkg "github.com/weaviate/s5cmd/v2/error"
+	"github.com/weaviate/s5cmd/v2/log"
+	"github.com/weaviate/s5cmd/v2/log/stat"
+	"github.com/weaviate/s5cmd/v2/storage"
+	"github.com/weaviate/s5cmd/v2/storage/url"
+	"github.com/weaviate/s5cmd/v2/strutil"
 )
 
 var listHelpTemplate = `Name:
@@ -200,7 +200,7 @@ func (l List) Run(ctx context.Context) error {
 		}
 
 		if err := object.Err; err != nil {
-			merror = multierror.Append(merror, err)
+			merror = errors.Join(merror, err)
 			printError(l.fullCommand, l.op, err)
 			continue
 		}
